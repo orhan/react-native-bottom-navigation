@@ -1,0 +1,38 @@
+{
+  "name": "react-native-bottom-navigation",
+  "version": "0.1.0",
+  "description": "A top-level component following the 'Bottom navigation' Material Design spec.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brentvatne/react-native-scrollable-tab-view.git"
+  },
+  "keywords": [
+    "react-native-component",
+    "react-component",
+    "react-native",
+    "ios",
+    "android",
+    "tabs",
+    "tab",
+    "material-design",
+    "bottom",
+    "navigation"
+  ],
+  "author": "Orhan Sönmez",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brentvatne/react-native-scrollable-tab-view/issues"
+  },
+  "peerDependencies": {
+    "react-native": ">=0.20.0"
+  },
+  "dependencies": {
+    "ramda": "^0.21.0",
+    "parse-color": "^1.0.0"
+  },
+  "homepage": "https://github.com/brentvatne/react-native-scrollable-tab-view#readme"
+}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MKSpinner">
+        <attr name="mk_spinnerStrokeColors" format="reference" localization="suggested" />
+        <attr name="mk_spinnerStrokeWidth" format="dimension" localization="suggested" />
+        <attr name="mk_spinnerAniDuration" format="integer" localization="suggested" />
+    </declare-styleable>
+    <declare-styleable name="TickView">
+        <attr name="mk_tickFillColor" format="color" localization="suggested" />
+        <attr name="mk_tickInset" format="dimension" localization="suggested" />
+    </declare-styleable>
+</resources>
