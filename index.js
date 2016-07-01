@@ -27,6 +27,12 @@ const {
 const BottomTabBar = require('./BottomTabBar');
 
 
+/* --- Member variables --- */
+
+var overlayTabs;
+var tabBarProps;
+
+
 /* --- Class methods --- */
 
 const BottomNavigation = React.createClass({
@@ -70,6 +76,53 @@ const BottomNavigation = React.createClass({
     };
   },
 
+  componentDidMount() {
+    overlayTabs = (this.props.tabBarPosition === 'overlayTop' || this.props.tabBarPosition === 'overlayBottom');
+    tabBarProps = {
+      scrollToTop: this.scrollToTop,
+      goToPage: this.goToPage,
+      tabs: this._children().map((child) => {
+        return {
+          icon: child.props.tabIcon,
+          name: child.props.tabLabel,
+          maskColor: child.props.tabMaskColor,
+          rippleColor: child.props.tabRippleColor,
+          activeColor: child.props.tabActiveColor,
+          backgroundColor: child.props.tabBackgroundColor,
+          animationValue: new Animated.Value(0),
+        }
+      }),
+      backgroundColor: this.props.tabBarColor,
+      borderWidth: this.props.tabBarBorderWidth,
+      borderColor: this.props.tabBarBorderColor,
+      labelStyle: this.props.labelStyle,
+      activeColor: this.props.activeColor,
+      inactiveColor: this.props.inactiveColor,
+      inactiveFontSize: this.props.inactiveFontSize || 12,
+      activeFontSize: this.props.activeFontSize || 14,
+      activeTab: this.state.currentPage,
+      scrollValue: this.state.scrollValue,
+      containerWidth: this.state.containerWidth,
+      rippleColor: this.props.rippleColor || this.props.maskColor,
+      maskColor: this.props.maskColor || this.props.rippleColor,
+    };
+
+    if (overlayTabs) {
+      tabBarProps.style = {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        [this.props.tabBarPosition === 'overlayTop' ? 'top' : 'bottom']: 0,
+      };
+    }
+
+    this.forceUpdate();
+    // this.setState({
+    //   overlayTabs,
+    //   tabBarProps,
+    // })
+  },
+
   componentWillReceiveProps(props) {
     if (props.page >= 0 && props.page !== this.state.currentPage) {
       this.goToPage(props.page);
@@ -108,7 +161,9 @@ const BottomNavigation = React.createClass({
       duration: 200,
     }).start();
 
-    this.setState({currentPage: pageNumber, });
+    tabBarProps.activeTab = pageNumber;
+    this.setState({tabBarProps});
+    // this.forceUpdate();
   },
 
 
@@ -263,51 +318,12 @@ const BottomNavigation = React.createClass({
   * Renders the component itself.
   */
   render() {
-    let overlayTabs = (this.props.tabBarPosition === 'overlayTop' || this.props.tabBarPosition === 'overlayBottom');
-    let tabBarProps = {
-      scrollToTop: this.scrollToTop,
-      goToPage: this.goToPage,
-      tabs: this._children().map((child) => {
-        return {
-          icon: child.props.tabIcon,
-          name: child.props.tabLabel,
-          maskColor: child.props.tabMaskColor,
-          rippleColor: child.props.tabRippleColor,
-          activeColor: child.props.tabActiveColor,
-          backgroundColor: child.props.tabBackgroundColor,
-          animationValue: new Animated.Value(0),
-        }
-      }),
-      backgroundColor: this.props.tabBarColor,
-      borderWidth: this.props.tabBarBorderWidth,
-      borderColor: this.props.tabBarBorderColor,
-      labelStyle: this.props.labelStyle,
-      activeColor: this.props.activeColor,
-      inactiveColor: this.props.inactiveColor,
-      inactiveFontSize: this.props.inactiveFontSize || 12,
-      activeFontSize: this.props.activeFontSize || 14,
-      activeTab: this.state.currentPage,
-      scrollValue: this.state.scrollValue,
-      containerWidth: this.state.containerWidth,
-      rippleColor: this.props.rippleColor || this.props.maskColor,
-      maskColor: this.props.maskColor || this.props.rippleColor,
-    };
-
-    if (overlayTabs) {
-      tabBarProps.style = {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        [this.props.tabBarPosition === 'overlayTop' ? 'top' : 'bottom']: 0,
-      };
-    }
-
     return (
       <View
         style={[styles.container, this.props.style]}
         onLayout={this._handleLayout}
         >
-        {this.props.tabBarPosition === 'top' && this.renderTabBar(tabBarProps)}
+        {tabBarProps && this.props.tabBarPosition === 'top' && this.renderTabBar(tabBarProps)}
         <Animated.View
           style={{
             flex: 1,
@@ -320,7 +336,7 @@ const BottomNavigation = React.createClass({
           >
         {this.renderScrollableContent()}
         </Animated.View>
-        {(this.props.tabBarPosition === 'bottom' || overlayTabs) && this.renderTabBar(tabBarProps)}
+        {tabBarProps && (this.props.tabBarPosition === 'bottom' || this.state.overlayTabs) && this.renderTabBar(tabBarProps)}
       </View>
     );
   },

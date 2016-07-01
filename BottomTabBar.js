@@ -9,6 +9,7 @@
 const React = require('react');
 const ReactNative = require('react-native');
 const {
+  Platform,
   Dimensions,
   StyleSheet,
   Animated,
@@ -163,8 +164,10 @@ const BottomTabBar = React.createClass({
             justifyContent: 'flex-end',
             height: 56,
           }}
+          pointerEvents='box-only'
+          enabled={true}
           maskColor={this.props.tabs.length <= 3 ? (tab.maskColor || this.props.maskColor) : 'rgba(255, 255, 255, 0.055)'}
-          rippleBorderRadiusPercent={this.props.tabs.length <= 3 ? 25 : 50}
+          rippleBorderRadiusPercent={this.props.tabs.length <= 3 ? (Platform.OS == 'ios' ? 25 : 100) : 50}
           rippleColor={this.props.tabs.length <= 3 ? (tab.rippleColor || this.props.rippleColor) : 'rgba(255, 255, 255, 0.055)'}
           rippleDuration={this.props.tabs.length <= 3 ? 100 : 50}
           rippleLocation="center"
@@ -234,14 +237,16 @@ const BottomTabBar = React.createClass({
             style={[styles.tab, {
               paddingBottom: tab.animationValue.interpolate({
                 inputRange: [0, 1],
-                outputRange: [this.props.tabs.length <= 3 ? 5 : 15, 5],
+                outputRange: [this.props.tabs.length <= 3 ? 5.5 : 15, 5.5],
               }),
             }]}
+            pointerEvents="none"
             >
             <Image
               style={[iconStyle, {tintColor: isTabActive ? (tab.activeColor || activeColor) : inactiveColor}]}
               source={tab.icon}
               resizeMode="contain"
+              pointerEvents="none"
               />
             <Animated.Text
               style={[
@@ -264,6 +269,7 @@ const BottomTabBar = React.createClass({
                 },
               ]}
               numberOfLines={1}
+              pointerEvents="none"
               >
               {tab.name}
             </Animated.Text>

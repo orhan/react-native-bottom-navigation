@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8A6D44471BB189F500D6A5EB /* BNTouchableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6D44461BB189F500D6A5EB /* BNTouchableView.m */; };
-		8ABF4CC51BB191C500158736 /* BNTouchableViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF4CC41BB191C500158736 /* BNTouchableViewManager.m */; };
+		E0179A0F1D26842200E35B8F /* BNTouchableView.m in Sources */ = {isa = PBXBuildFile; fileRef = E0179A0D1D26842200E35B8F /* BNTouchableView.m */; };
+		E0179A101D26842200E35B8F /* BNTouchableViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E0179A0E1D26842200E35B8F /* BNTouchableViewManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,9 +25,9 @@
 
 /* Begin PBXFileReference section */
 		8A1B8E771B22E4E300DB45C2 /* libRCTBottomNavigation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRCTBottomNavigation.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		8A6D44451BB189D100D6A5EB /* BNTouchableView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BNTouchableView.h; path = RCTMaterialKit/BNTouchableView.h; sourceTree = "<group>"; };
-		8A6D44461BB189F500D6A5EB /* BNTouchableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BNTouchableView.m; path = RCTMaterialKit/BNTouchableView.m; sourceTree = "<group>"; };
-		8ABF4CC41BB191C500158736 /* BNTouchableViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BNTouchableViewManager.m; path = RCTMaterialKit/BNTouchableViewManager.m; sourceTree = "<group>"; };
+		E0179A0C1D26842200E35B8F /* BNTouchableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNTouchableView.h; sourceTree = "<group>"; };
+		E0179A0D1D26842200E35B8F /* BNTouchableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNTouchableView.m; sourceTree = "<group>"; };
+		E0179A0E1D26842200E35B8F /* BNTouchableViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNTouchableViewManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,7 +44,6 @@
 		8A1B8E6E1B22E4E300DB45C2 = {
 			isa = PBXGroup;
 			children = (
-				8A1B8EAE1B22E7D100DB45C2 /* MaterialKit */,
 				E0DDEA2D1CFF347800CD98CC /* RCTBottomNavigation */,
 				8A1B8E781B22E4E300DB45C2 /* Products */,
 			);
@@ -58,19 +57,12 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		8A1B8EAE1B22E7D100DB45C2 /* MaterialKit */ = {
-			isa = PBXGroup;
-			children = (
-				8A6D44451BB189D100D6A5EB /* BNTouchableView.h */,
-				8A6D44461BB189F500D6A5EB /* BNTouchableView.m */,
-			);
-			name = MaterialKit;
-			sourceTree = "<group>";
-		};
 		E0DDEA2D1CFF347800CD98CC /* RCTBottomNavigation */ = {
 			isa = PBXGroup;
 			children = (
-				8ABF4CC41BB191C500158736 /* BNTouchableViewManager.m */,
+				E0179A0C1D26842200E35B8F /* BNTouchableView.h */,
+				E0179A0D1D26842200E35B8F /* BNTouchableView.m */,
+				E0179A0E1D26842200E35B8F /* BNTouchableViewManager.m */,
 			);
 			name = RCTBottomNavigation;
 			sourceTree = "<group>";
@@ -131,8 +123,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8ABF4CC51BB191C500158736 /* BNTouchableViewManager.m in Sources */,
-				8A6D44471BB189F500D6A5EB /* BNTouchableView.m in Sources */,
+				E0179A101D26842200E35B8F /* BNTouchableViewManager.m in Sources */,
+				E0179A0F1D26842200E35B8F /* BNTouchableView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

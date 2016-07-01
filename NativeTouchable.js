@@ -20,26 +20,25 @@ import {
 
 /* --- Class methods --- */
 
-class NativeTouchable extends Component {
+const NativeTouchable = React.createClass({
 
   /* --- Private methods --- */
 
   _onTouchEvent(event) {
-    console.log("Test")
     if (this.props.onTouch) {
       const evt = event.nativeEvent;
       evt.x = Platform.OS === 'android' ? evt.x / PixelRatio.get() : evt.x;
       evt.x = Platform.OS === 'android' ? evt.x / PixelRatio.get() : evt.x;
       this.props.onTouch(evt);
     }
-  }
+  },
 
 
   /* --- Public methods --- */
 
   measure(cb) {
     return this.refs.node.measure(cb);
-  }
+  },
 
 
   /* --- Rendering methods --- */
@@ -57,7 +56,7 @@ class NativeTouchable extends Component {
       </NativeTouchableView>
     );
   }
-}
+});
 
 
 /* --- Component setup --- */
