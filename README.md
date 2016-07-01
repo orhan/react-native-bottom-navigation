@@ -48,8 +48,36 @@ List<ReactPackage> getPackages() {
 1. `const BottomNavigation = require('react-native-bottom-navigation');`
 
 2.
-```js
+```html
+<BottomNavigation
+  style={styles.container}
+  activeColor="rgb(0, 100, 125)"
+  inactiveColor="#757575"
+  >
+  <View
+    style={styles.child}
+    tabLabel="Tab 1"
+    tabIcon={require('./icons/ic_tab_1.png')}
+    />
 
+  <View
+    style={styles.child}
+    tabLabel="Tab 2"
+    tabIcon={require('./icons/ic_tab_2.png')}
+    />
+
+  <View
+    style={styles.child}
+    tabLabel="Tab 3"
+    tabIcon={require('./icons/ic_tab_3.png')}
+    />
+
+  <View
+    style={styles.child}
+    tabLabel="Tab 4"
+    tabIcon={require('./icons/ic_tab_4.png')}
+    />
+</BottomNavigation>
 ```
 
 ## Example Project
