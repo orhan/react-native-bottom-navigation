@@ -6,26 +6,26 @@ This is a top-level component following the ['Bottom navigation' Material Design
 
 ## Installation
 
-1. `npm install --save react-native-bottom-navigation`
+* `npm install --save react-native-bottom-navigation`
 
-Using RNPM (React-Native Package Manager):
+* Using RNPM (React-Native Package Manager):
 
-2. `rnpm link react-native-bottom-navigation`
+`rnpm link react-native-bottom-navigation`
 
-Manually (iOS):
+* Manually (iOS):
 
-2. Add node_modules/react-native-bottom-navigation/iOS/RCTBottomNavigation.xcodeproj to your xcode project, usually under the Libraries group
-3. Add libRCTBottomNavigation.a (from Products under RCTBottomNavigation.xcodeproj) to build target's *Linked Frameworks and Libraries* list
+1. Add node_modules/react-native-bottom-navigation/iOS/RCTBottomNavigation.xcodeproj to your xcode project, usually under the Libraries group
+2. Add libRCTBottomNavigation.a (from Products under RCTBottomNavigation.xcodeproj) to build target's *Linked Frameworks and Libraries* list
 
-Manually (Android):
+* Manually (Android):
 
-2. Add the following snippet to your `android/settings.gradle`:
+1. Add the following snippet to your `android/settings.gradle`:
 ```
 include ':RNBottomNavigation'
 project(':RNBottomNavigation').projectDir = file('../node_modules/react-native-bottom-navigation/android')
 ```
 
-3. Declare the dependency in your `android/app/build.gradle`
+2. Declare the dependency in your `android/app/build.gradle`
 ```
 dependencies {
     ...
@@ -33,7 +33,7 @@ dependencies {
 }
 ```
 
-4.
+3.
 ```
 import com.github.orhan.bottomnavigation.ReactBottomNavigationPackage;          <-- Import this!
 
