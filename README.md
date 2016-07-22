@@ -6,21 +6,25 @@ This is a top-level component following the ['Bottom navigation' Material Design
 
 ## Installation
 
-1. 
-
 `npm install --save react-native-bottom-navigation`
 
-2a. Using RNPM (React-Native Package Manager):
+---
+
+### Using RNPM (React-Native Package Manager):
 
 `rnpm link react-native-bottom-navigation`
 
-2b. Manually (iOS):
+---
+
+### Manually (iOS):
 
   1. Add node_modules/react-native-bottom-navigation/iOS/RCTBottomNavigation.xcodeproj to your xcode project, usually under the Libraries group
   
   2. Add libRCTBottomNavigation.a (from Products under RCTBottomNavigation.xcodeproj) to build target's *Linked Frameworks and Libraries* list
 
-2c. Manually (Android):
+---
+
+### Manually (Android):
 
   1. Add the following snippet to your `android/settings.gradle`:
 ```
@@ -53,9 +57,7 @@ List<ReactPackage> getPackages() {
 
 ## Usage
 
-1. `const BottomNavigation = require('react-native-bottom-navigation');`
-
-2.
+`const BottomNavigation = require('react-native-bottom-navigation');`
 
 ```html
 <BottomNavigation
