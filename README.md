@@ -37,7 +37,7 @@ This is a top-level component following the ['Bottom navigation' Material Design
   }
   ```
 
-  3.
+  3. In your `MainActivity.java`, make the following changes:
   ```
   import com.github.orhan.bottomnavigation.ReactBottomNavigationPackage;     <-- Import this!
 
