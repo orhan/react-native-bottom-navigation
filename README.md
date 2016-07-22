@@ -8,13 +8,11 @@ This is a top-level component following the ['Bottom navigation' Material Design
 
 `npm install --save react-native-bottom-navigation`
 
--
 
 ### Using RNPM (React-Native Package Manager):
 
 `rnpm link react-native-bottom-navigation`
 
--
 
 ### Manually (iOS):
 
@@ -22,7 +20,6 @@ This is a top-level component following the ['Bottom navigation' Material Design
   
   2. Add libRCTBottomNavigation.a (from Products under RCTBottomNavigation.xcodeproj) to build target's *Linked Frameworks and Libraries* list
 
--
 
 ### Manually (Android):
 
