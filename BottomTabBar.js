@@ -62,6 +62,11 @@ const BottomTabBar = React.createClass({
       animationValue = 1;
     }
 
+    let numberOfTabs = this.props.tabs.length;
+    let screenWidth = Dimensions.get('window').width;
+    let maxTabWidth = numberOfTabs <= 3 ? (3 * 168) : 168 + (numberOfTabs - 1) * 96;
+    let justifyTabs = maxTabWidth < screenWidth ? 'center' : 'space-around';
+
     return {
       lastTab: activeTab,
       inactiveTabWidth: tabWidths.inactiveTabWidth,
@@ -69,6 +74,9 @@ const BottomTabBar = React.createClass({
       backgroundColor: this.props.backgroundColor || '#FFFFFF',
       nextBackgroundColor: nextBackgroundColor,
       animationValue: new Animated.Value(1),
+      screenWidth,
+      maxTabWidth,
+      justifyTabs
     }
   },
 
@@ -77,10 +85,16 @@ const BottomTabBar = React.createClass({
     let rippleColor = this.props.rippleColor;
     let maskColor = this.props.maskColor;
 
+    let numberOfTabs = nextProps.tabs.length;
+    let maxTabWidth = numberOfTabs <= 3 ? (3 * 168) : 168 + (numberOfTabs - 1) * 96;
+    let justifyTabs = maxTabWidth < this.state.screenWidth ? 'center' : 'space-around';
+
     this.setState({
       lastTab: this.props.activeTab,
       inactiveTabWidth: tabWidths.inactiveTabWidth,
       activeTabWidth: tabWidths.activeTabWidth,
+      maxTabWidth,
+      justifyTabs
     });
   },
 
@@ -280,21 +294,12 @@ const BottomTabBar = React.createClass({
   },
 
   render() {
-    const numberOfTabs = this.props.tabs.length;
-    const screenWidth = Dimensions.get('window').width;
-    const maxTabWidth = numberOfTabs <= 3 ? (3 * 168) : 168 + (numberOfTabs - 1) * 96;
-
-    let containerWidth = screenWidth;
-    let justifyTabs = 'space-around';
-
-    if (maxTabWidth < screenWidth) {
-      justifyTabs = 'center';
-    }
-
     return (
       <View
         style={[
+          styles.container,
           {
+            width: this.state.screenWidth,
             borderTopWidth: this.props.borderWidth || 0.5,
             borderTopColor: this.props.borderColor || '#E5E5E5',
             backgroundColor: this.state.backgroundColor
@@ -305,7 +310,7 @@ const BottomTabBar = React.createClass({
           style={[
             styles.tabs,
             {
-              justifyContent: justifyTabs,
+              justifyContent: this.state.justifyTabs,
             },
           ]}
           >
@@ -346,7 +351,6 @@ const styles = StyleSheet.create({
   container: {
     alignSelf: 'stretch',
     alignItems: 'center',
-    width: null,
     height: 56,
     borderLeftWidth: 0,
     borderRightWidth: 0,
