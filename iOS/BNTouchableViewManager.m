@@ -3,9 +3,9 @@
  * Native component used for the Ripple effect.
  */
 
-#import "RCTViewManager.h"
-#import "RCTEventDispatcher.h"
-#import "UIView+React.h"
+#import <React/RCTViewManager.h>
+#import <React/RCTEventDispatcher.h>
+#import <React/UIView+React.h>
 #import "BNTouchableView.h"
 
 @interface BNTouchableViewManager : RCTViewManager <BNTouchableViewDelegate>

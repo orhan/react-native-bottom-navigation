@@ -6,7 +6,7 @@
 #ifndef BNTouchableView_h
 #define BNTouchableView_h
 
-#import "RCTView.h"
+#import <React/RCTView.h>
 
 @class BNTouchableView;
 @protocol BNTouchableViewDelegate;
