@@ -1,6 +1,6 @@
 {
   "name": "react-native-bottom-navigation",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "A top-level component following the 'Bottom navigation' Material Design spec.",
   "main": "index.js",
   "scripts": {
@@ -31,8 +31,9 @@
     "react-native": ">=0.20.0"
   },
   "dependencies": {
-    "ramda": "^0.21.0",
-    "parse-color": "^1.0.0"
+    "parse-color": "^1.0.0",
+    "prop-types": "^15.5.10",
+    "ramda": "^0.21.0"
   },
   "homepage": "https://github.com/orhan/react-native-bottom-navigation"
 }

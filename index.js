@@ -6,13 +6,8 @@
 
 /* --- Imports --- */
 
-const React = require('react');
-const {
-  PropTypes,
-} = React;
-
-const ReactNative = require('react-native');
-const {
+import React, {Component} from 'react';
+import {
   Dimensions,
   View,
   Animated,
@@ -21,25 +16,25 @@ const {
   Platform,
   StyleSheet,
   ViewPagerAndroid,
-  InteractionManager,
-} = ReactNative;
+} from 'react-native';
 
-const BottomTabBar = require('./BottomTabBar');
+import PropTypes from 'prop-types';
+import BottomTabBar from './BottomTabBar';
 
 
 /* --- Member variables --- */
 
-var overlayTabs;
-var tabBarProps;
+let overlayTabs;
+let tabBarProps = {};
 
 
 /* --- Class methods --- */
 
-const BottomNavigation = React.createClass({
+export default class BottomNavigation extends Component {
 
   /* --- Component setup -- */
 
-  propTypes: {
+  static propTypes = {
     tabBarPosition: PropTypes.oneOf(['top', 'bottom', 'overlayTop', 'overlayBottom', ]),
     initialPage: PropTypes.number,
     page: PropTypes.number,
@@ -49,85 +44,38 @@ const BottomNavigation = React.createClass({
     renderTabBar: PropTypes.any,
     style: View.propTypes.style,
     contentProps: PropTypes.object,
-  },
+  };
 
-  getDefaultProps() {
-    return {
-      tabBarPosition: 'bottom',
-      initialPage: 0,
-      page: -1,
-      locked: true,
-      animated: false,
-      onChangeTab: () => {},
-      onScroll: () => {},
-      contentProps: {},
-    };
-  },
+  static defaultProps = {
+    tabBarPosition: 'bottom',
+    initialPage: 0,
+    page: -1,
+    locked: true,
+    animated: false,
+    onChangeTab: () => {},
+    onScroll: () => {},
+    contentProps: {},
+  };
 
 
   /* --- Lifecycle methods --- */
 
-  getInitialState() {
-    return {
-      currentPage: this.props.initialPage,
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      currentPage: this.props.initialPage || 0,
       scrollValue: new Animated.Value(this.props.initialPage),
       containerWidth: Dimensions.get('window').width,
       animationValue: new Animated.Value(1),
     };
-  },
-
-  componentDidMount() {
-    overlayTabs = (this.props.tabBarPosition === 'overlayTop' || this.props.tabBarPosition === 'overlayBottom');
-    tabBarProps = {
-      scrollToTop: this.scrollToTop,
-      goToPage: this.goToPage,
-      tabs: this._children().map((child) => {
-        return {
-          icon: child.props.tabIcon,
-          name: child.props.tabLabel,
-          maskColor: child.props.tabMaskColor,
-          rippleColor: child.props.tabRippleColor,
-          activeColor: child.props.tabActiveColor,
-          backgroundColor: child.props.tabBackgroundColor,
-          animationValue: new Animated.Value(0),
-        }
-      }),
-      backgroundColor: this.props.tabBarColor,
-      borderWidth: this.props.tabBarBorderWidth,
-      borderColor: this.props.tabBarBorderColor,
-      labelStyle: this.props.labelStyle,
-      activeColor: this.props.activeColor,
-      inactiveColor: this.props.inactiveColor,
-      inactiveFontSize: this.props.inactiveFontSize || 12,
-      activeFontSize: this.props.activeFontSize || 14,
-      activeTab: this.state.currentPage,
-      scrollValue: this.state.scrollValue,
-      containerWidth: this.state.containerWidth,
-      rippleColor: this.props.rippleColor || this.props.maskColor,
-      maskColor: this.props.maskColor || this.props.rippleColor,
-    };
-
-    if (overlayTabs) {
-      tabBarProps.style = {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        [this.props.tabBarPosition === 'overlayTop' ? 'top' : 'bottom']: 0,
-      };
-    }
-
-    this.forceUpdate();
-    // this.setState({
-    //   overlayTabs,
-    //   tabBarProps,
-    // })
-  },
+  }
 
   componentWillReceiveProps(props) {
     if (props.page >= 0 && props.page !== this.state.currentPage) {
       this.goToPage(props.page);
     }
-  },
+  }
 
 
   /* --- Public methods --- */
@@ -136,7 +84,7 @@ const BottomNavigation = React.createClass({
     if (this.props.onScrollToTop) {
       this.props.onScrollToTop({ i: pageNumber, ref: this._children()[pageNumber], });
     }
-  },
+  }
 
   goToPage(pageNumber) {
     if (this.props.onChangeTab) {
@@ -161,13 +109,52 @@ const BottomNavigation = React.createClass({
       duration: 200,
     }).start();
 
-    tabBarProps.activeTab = pageNumber;
-    this.setState({tabBarProps});
-    // this.forceUpdate();
-  },
+    this.setState({currentPage: pageNumber});
+  }
 
 
   /* --- Private methods --- */
+
+  _updateTabBarProps() {
+    overlayTabs = (this.props.tabBarPosition === 'overlayTop' || this.props.tabBarPosition === 'overlayBottom');
+    tabBarProps = {
+      scrollToTop: this.scrollToTop.bind(this),
+      goToPage: this.goToPage.bind(this),
+      tabs: this._children().map((child) => {
+        return {
+          icon: child.props.tabIcon,
+          name: child.props.tabLabel,
+          maskColor: child.props.tabMaskColor,
+          rippleColor: child.props.tabRippleColor,
+          activeColor: child.props.tabActiveColor,
+          backgroundColor: child.props.tabBackgroundColor,
+          animationValue: new Animated.Value(0),
+        }
+      }),
+      activeTab: this.state.currentPage,
+      backgroundColor: this.props.tabBarColor,
+      borderWidth: this.props.tabBarBorderWidth,
+      borderColor: this.props.tabBarBorderColor,
+      labelStyle: this.props.labelStyle,
+      activeColor: this.props.activeColor,
+      inactiveColor: this.props.inactiveColor,
+      inactiveFontSize: this.props.inactiveFontSize || 12,
+      activeFontSize: this.props.activeFontSize || 14,
+      scrollValue: this.state.scrollValue,
+      containerWidth: this.state.containerWidth,
+      rippleColor: this.props.rippleColor || this.props.maskColor,
+      maskColor: this.props.maskColor || this.props.rippleColor,
+    };
+
+    if (overlayTabs) {
+      tabBarProps.style = {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        [this.props.tabBarPosition === 'overlayTop' ? 'top' : 'bottom']: 0,
+      };
+    }
+  }
 
   _updateSelectedPage(currentPage) {
     let localCurrentPage = currentPage;
@@ -186,12 +173,12 @@ const BottomNavigation = React.createClass({
     this.setState({currentPage: localCurrentPage, }, () => {
       this.props.onChangeTab({ i: localCurrentPage, ref: this._children()[localCurrentPage], });
     });
-  },
+  }
 
   _updateScrollValue(value) {
     this.state.scrollValue.setValue(value);
     this.props.onScroll(value);
-  },
+  }
 
   _handleLayout(e) {
     const { width, } = e.nativeEvent.layout;
@@ -204,11 +191,11 @@ const BottomNavigation = React.createClass({
         });
       }
     }
-  },
+  }
 
   _children() {
     return React.Children.map(this.props.children, (child) => child);
-  },
+  }
 
   /* --- Rendering methods --- */
 
@@ -223,7 +210,7 @@ const BottomNavigation = React.createClass({
     } else {
       return <BottomTabBar {...props} />;
     }
-  },
+  }
 
   /**
   * Renders a horizontal ScrollView on iOS and a native ViewPager on Android.
@@ -312,16 +299,18 @@ const BottomNavigation = React.createClass({
         </ViewPagerAndroid>
       );
     }
-  },
+  }
 
   /**
   * Renders the component itself.
   */
   render() {
+    this._updateTabBarProps();
+
     return (
       <View
         style={[styles.container, this.props.style]}
-        onLayout={this._handleLayout}
+        onLayout={this._handleLayout.bind(this)}
         >
         {tabBarProps && this.props.tabBarPosition === 'top' && this.renderTabBar(tabBarProps)}
         <Animated.View
@@ -339,8 +328,8 @@ const BottomNavigation = React.createClass({
         {tabBarProps && (this.props.tabBarPosition === 'bottom' || this.state.overlayTabs) && this.renderTabBar(tabBarProps)}
       </View>
     );
-  },
-});
+  }
+}
 
 
 /* --- Stylesheet --- */
@@ -362,8 +351,3 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-
-
-/* --- Module exports --- */
-
-module.exports = BottomNavigation;

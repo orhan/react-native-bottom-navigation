@@ -1,57 +1,59 @@
 /**
-* Bottom Tab Bar.
-* Tab bar implementation for the Bottom-Navigation-View.
-*/
+ * Bottom Tab Bar.
+ * Tab bar implementation for the Bottom-Navigation-View.
+ */
 'use strict';
 
 /* --- Imports --- */
 
-const React = require('react');
-const ReactNative = require('react-native');
-const {
+import React, {Component} from 'react';
+import {
   Platform,
   Dimensions,
   StyleSheet,
   Animated,
+  Easing,
   View,
   Image,
-  Text,
-} = ReactNative;
+} from 'react-native';
 
-const Button = require('./Button');
+import PropTypes from 'prop-types';
+
+import Button from './Button';
 import Ripple from './Ripple';
 
-var parseColor = require('parse-color');
+let parseColor = require('parse-color');
 
 
 /* --- Member variables --- */
 
-var tabPositions = {};
-var backgroundColor;
-var maskColor;
-var rippleColor;
+let tabPositions = {};
+let backgroundColor;
+let maskColor;
+let rippleColor;
 
 
 /* --- Class methods --- */
 
-const BottomTabBar = React.createClass({
+export default class BottomTabBar extends Component {
 
   /* --- Component setup --- */
 
-  propTypes: {
-    goToPage: React.PropTypes.func,
-    activeTab: React.PropTypes.number,
-    tabs: React.PropTypes.array,
-    underlineColor: React.PropTypes.string,
-    backgroundColor: React.PropTypes.string,
-    activeColor: React.PropTypes.string,
-    inactiveColor: React.PropTypes.string,
-  },
-
+  static propTypes = {
+    goToPage: PropTypes.func,
+    activeTab: PropTypes.number,
+    tabs: PropTypes.array,
+    underlineColor: PropTypes.string,
+    backgroundColor: PropTypes.string,
+    activeColor: PropTypes.string,
+    inactiveColor: PropTypes.string,
+  };
 
   /* --- Lifecycle methods --- */
 
-  getInitialState() {
+  constructor(props) {
+    super(props);
+
     let tabWidths = this.setTabWidth(this.props.tabs.length);
     let nextBackgroundColor = this.props.backgroundColor || '#FFFFFF';
     let activeTab = this.props.activeTab || 0;
@@ -67,7 +69,7 @@ const BottomTabBar = React.createClass({
     let maxTabWidth = numberOfTabs <= 3 ? (3 * 168) : 168 + (numberOfTabs - 1) * 96;
     let justifyTabs = maxTabWidth < screenWidth ? 'center' : 'space-around';
 
-    return {
+    this.state = {
       lastTab: activeTab,
       inactiveTabWidth: tabWidths.inactiveTabWidth,
       activeTabWidth: tabWidths.activeTabWidth,
@@ -78,7 +80,11 @@ const BottomTabBar = React.createClass({
       maxTabWidth,
       justifyTabs
     }
-  },
+  }
+
+  componentDidMount() {
+    this.props.tabs[this.state.lastTab].animationValue.setValue(1);
+  }
 
   componentWillReceiveProps(nextProps) {
     let tabWidths = this.setTabWidth(nextProps.tabs.length);
@@ -89,6 +95,8 @@ const BottomTabBar = React.createClass({
     let maxTabWidth = numberOfTabs <= 3 ? (3 * 168) : 168 + (numberOfTabs - 1) * 96;
     let justifyTabs = maxTabWidth < this.state.screenWidth ? 'center' : 'space-around';
 
+    let previousLastTab = this.state.lastTab;
+
     this.setState({
       lastTab: this.props.activeTab,
       inactiveTabWidth: tabWidths.inactiveTabWidth,
@@ -96,7 +104,7 @@ const BottomTabBar = React.createClass({
       maxTabWidth,
       justifyTabs
     });
-  },
+  }
 
 
   /* --- Private methods --- */
@@ -135,7 +143,7 @@ const BottomTabBar = React.createClass({
 
       return {inactiveTabWidth: inactiveTabWidth, activeTabWidth: activeTabWidth};
     }
-  },
+  }
 
 
   /* --- Rendering methods --- */
@@ -151,6 +159,7 @@ const BottomTabBar = React.createClass({
       toValue: isTabActive ? 1 : 0,
       duration: 150,
     }).start();
+
 
     return (
       <Animated.View
@@ -171,7 +180,7 @@ const BottomTabBar = React.createClass({
 
           tabPositions[tab.name] = {x: left, y: top};
         }}
-        >
+      >
         <Button
           style={{
             alignSelf: 'stretch',
@@ -181,7 +190,7 @@ const BottomTabBar = React.createClass({
           pointerEvents='box-only'
           enabled={true}
           maskColor={this.props.tabs.length <= 3 ? (tab.maskColor || this.props.maskColor) : 'rgba(255, 255, 255, 0.055)'}
-          rippleBorderRadiusPercent={this.props.tabs.length <= 3 ? (Platform.OS == 'ios' ? 25 : 100) : 50}
+          rippleBorderRadiusPercent={this.props.tabs.length <= 3 ? (Platform.OS === 'ios' ? 25 : 100) : 50}
           rippleColor={this.props.tabs.length <= 3 ? (tab.rippleColor || this.props.rippleColor) : 'rgba(255, 255, 255, 0.055)'}
           rippleDuration={this.props.tabs.length <= 3 ? 100 : 50}
           rippleLocation="center"
@@ -229,7 +238,7 @@ const BottomTabBar = React.createClass({
                   let tabPosition = tabPositions[tab.name];
                   let backgroundColor = tab.backgroundColor || this.props.backgroundColor;
 
-                  if (this.props.tabs.length > 3 || backgroundColor != this.state.nextBackgroundColor) {
+                  if (this.props.tabs.length > 3 || backgroundColor !== this.state.nextBackgroundColor) {
                     this.refs.mainRipple.setColors(maskColor, rippleColor);
                     this.refs.mainRipple.setCoordinates(tabPosition.x + touchEvent.x, tabPosition.y + touchEvent.y);
                     this.refs.mainRipple.showRipple();
@@ -246,27 +255,27 @@ const BottomTabBar = React.createClass({
                 break;
             }
           }}
-          >
+        >
           <Animated.View
             style={[styles.tab, {
               paddingBottom: tab.animationValue.interpolate({
                 inputRange: [0, 1],
-                outputRange: [this.props.tabs.length <= 3 ? 5.5 : 15, 5.5],
+                outputRange: [this.props.tabs.length <= 3 ? 7 : 15, 6],
               }),
             }]}
             pointerEvents="none"
-            >
+          >
             <Image
               style={[iconStyle, {tintColor: isTabActive ? (tab.activeColor || activeColor) : inactiveColor}]}
               source={tab.icon}
               resizeMode="contain"
               pointerEvents="none"
-              />
+            />
             <Animated.Text
               style={[
                 {
                   alignSelf: 'center',
-                  marginTop: 1,
+                  marginTop: 1.5,
                   backgroundColor: 'rgba(0, 0, 0, 0)',
                 },
                 this.props.labelStyle,
@@ -284,14 +293,14 @@ const BottomTabBar = React.createClass({
               ]}
               numberOfLines={1}
               pointerEvents="none"
-              >
+            >
               {tab.name}
             </Animated.Text>
           </Animated.View>
         </Button>
       </Animated.View>
     );
-  },
+  }
 
   render() {
     return (
@@ -305,7 +314,7 @@ const BottomTabBar = React.createClass({
             backgroundColor: this.state.backgroundColor
           }
         ]}
-        >
+      >
         <View
           style={[
             styles.tabs,
@@ -313,7 +322,7 @@ const BottomTabBar = React.createClass({
               justifyContent: this.state.justifyTabs,
             },
           ]}
-          >
+        >
           <Animated.View
             style={{
               position: 'absolute',
@@ -327,25 +336,25 @@ const BottomTabBar = React.createClass({
                 outputRange: [0, 1],
               }),
             }}
-            />
+          />
 
-            <Ripple
-              ref="mainRipple"
-              style={styles.ripple}
-              rippleDuration={100}
-              rippleColor={rippleColor || this.props.rippleColor}
-              maskColor={maskColor || this.props.maskColor}
-              />
+          <Ripple
+            ref="mainRipple"
+            style={styles.ripple}
+            rippleDuration={100}
+            rippleColor={rippleColor || this.props.rippleColor}
+            maskColor={maskColor || this.props.maskColor}
+          />
 
           {this.props.tabs.map((tab, i) => this.renderTabOption(tab, i))}
         </View>
       </View>
     );
-  },
-});
+  }
+}
 
 
-/* --- Stylsheet --- */
+/* --- Stylesheet --- */
 
 const styles = StyleSheet.create({
   container: {
@@ -372,8 +381,3 @@ const styles = StyleSheet.create({
     bottom: 0,
   }
 });
-
-
-/* --- Module exports --- */
-
-module.exports = BottomTabBar;

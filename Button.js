@@ -6,23 +6,14 @@
 
 /* --- Imports --- */
 
-import React, {
-  Component,
-  PropTypes
-} from 'react';
-
-const ReactNative = require('react-native');
-const {
-  TouchableWithoutFeedback,
-  View,
-} = ReactNative;
-
+import React, {Component} from 'react';
+import {TouchableWithoutFeedback, View} from 'react-native';
 import Ripple from './Ripple';
 
 
 /* --- Class methods --- */
 
-const Button = React.createClass({
+export default class Button extends Component {
   render() {
     return (
       <TouchableWithoutFeedback {...this.props}>
@@ -38,9 +29,4 @@ const Button = React.createClass({
       </TouchableWithoutFeedback>
     )
   }
-})
-
-
-/* --- Module exports --- */
-
-module.exports = Button;
+}

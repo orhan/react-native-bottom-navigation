@@ -6,11 +6,7 @@
 
 /* --- Imports --- */
 
-import React, {
-  Component,
-  PropTypes,
-} from 'react';
-
+import React, {Component} from 'react';
 import {
   Animated,
   Easing,
@@ -18,6 +14,7 @@ import {
   View,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import NativeTouchable from './NativeTouchable';
 
 

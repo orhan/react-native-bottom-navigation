@@ -7,7 +7,6 @@
 
 import React, {
   Component,
-  PropTypes,
 } from 'react';
 
 import {
@@ -17,10 +16,37 @@ import {
   View,
 } from 'react-native';
 
+import PropTypes from 'prop-types';
+
+
+/* --- Component setup --- */
+
+const NativeTouchableView = requireNativeComponent('BNTouchableView', {
+  name: 'NativeTouchable',
+  propTypes: {
+    ...View.propTypes,
+
+    // Touch events callback
+    onTouch: PropTypes.func,
+  },
+}, {
+  nativeOnly: {
+    nativeBackgroundAndroid: true,
+    nativeForegroundAndroid: true,
+  },
+});
+
 
 /* --- Class methods --- */
 
-const NativeTouchable = React.createClass({
+export default class NativeTouchable extends Component {
+
+  static propTypes = {
+    ...View.propTypes,
+
+    // Touch events callback
+    onTouch: PropTypes.func,
+  };
 
   /* --- Private methods --- */
 
@@ -31,14 +57,14 @@ const NativeTouchable = React.createClass({
       evt.x = Platform.OS === 'android' ? evt.x / PixelRatio.get() : evt.x;
       this.props.onTouch(evt);
     }
-  },
+  }
 
 
   /* --- Public methods --- */
 
   measure(cb) {
     return this.refs.node.measure(cb);
-  },
+  }
 
 
   /* --- Rendering methods --- */
@@ -49,36 +75,11 @@ const NativeTouchable = React.createClass({
         ref="node"
         {...this.props}
         style={this.props.style}
-        onChange={this._onTouchEvent}
+        onChange={this._onTouchEvent.bind(this)}
         onLayout={this.props.onLayout}
         >
         {this.props.children}
       </NativeTouchableView>
     );
   }
-});
-
-
-/* --- Component setup --- */
-
-NativeTouchable.propTypes = {
-  ...View.propTypes,
-
-  // Touch events callback
-  onTouch: PropTypes.func,
 };
-
-const NativeTouchableView = requireNativeComponent('BNTouchableView', {
-  name: 'NativeTouchable',
-  propTypes: NativeTouchable.propTypes,
-}, {
-  nativeOnly: {
-    nativeBackgroundAndroid: true,
-    nativeForegroundAndroid: true,
-  },
-});
-
-
-/* --- Module exports --- */
-
-module.exports = NativeTouchable;
