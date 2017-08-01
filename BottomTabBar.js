@@ -19,10 +19,11 @@ import {
 
 import PropTypes from 'prop-types';
 
+import DisplayLabels from './DisplayLabels';
 import Button from './Button';
 import Ripple from './Ripple';
 
-let parseColor = require('parse-color');
+import parseColor from 'parse-color';
 
 
 /* --- Member variables --- */
@@ -48,6 +49,7 @@ export default class BottomTabBar extends Component {
     activeColor: PropTypes.string,
     inactiveColor: PropTypes.string,
   };
+
 
   /* --- Lifecycle methods --- */
 
@@ -88,14 +90,10 @@ export default class BottomTabBar extends Component {
 
   componentWillReceiveProps(nextProps) {
     let tabWidths = this.setTabWidth(nextProps.tabs.length);
-    let rippleColor = this.props.rippleColor;
-    let maskColor = this.props.maskColor;
 
     let numberOfTabs = nextProps.tabs.length;
     let maxTabWidth = numberOfTabs <= 3 ? (3 * 168) : 168 + (numberOfTabs - 1) * 96;
     let justifyTabs = maxTabWidth < this.state.screenWidth ? 'center' : 'space-around';
-
-    let previousLastTab = this.state.lastTab;
 
     this.setState({
       lastTab: this.props.activeTab,
@@ -113,7 +111,7 @@ export default class BottomTabBar extends Component {
     let screenWidth = Dimensions.get('window').width;
 
     // We have three tabs or less, distribute them evenly.
-    if (tabCount <= 3) {
+    if (tabCount <= 3 || this.props.displayLabels === DisplayLabels.ALWAYS) {
       let tabWidth = screenWidth / tabCount;
 
       if (tabWidth > 168) {
@@ -154,12 +152,15 @@ export default class BottomTabBar extends Component {
     const inactiveColor = this.props.inactiveColor || 'grey';
     const iconStyle = {alignSelf: 'center', height: 24};
 
-    tab.animationValue.setValue(this.state.lastTab == page ? 1 : 0);
+    tab.animationValue.setValue(this.state.lastTab === page ? 1 : 0);
+
     Animated.timing(tab.animationValue, {
       toValue: isTabActive ? 1 : 0,
       duration: 150,
     }).start();
 
+    let hideLabels = this.props.displayLabels === DisplayLabels.NEVER;
+    let showAllLabels = (this.props.tabs.length <= 3 && this.props.displayLabels !== DisplayLabels.ACTIVE_TAB_ONLY) || this.props.displayLabels === DisplayLabels.ALWAYS;
 
     return (
       <Animated.View
@@ -180,11 +181,11 @@ export default class BottomTabBar extends Component {
 
           tabPositions[tab.name] = {x: left, y: top};
         }}
-      >
+        >
         <Button
           style={{
             alignSelf: 'stretch',
-            justifyContent: 'flex-end',
+            justifyContent: hideLabels ? 'center' : 'flex-end',
             height: 56,
           }}
           pointerEvents='box-only'
@@ -198,6 +199,8 @@ export default class BottomTabBar extends Component {
             if (isTabActive) {
               this.props.scrollToTop(page);
               return;
+            } else if (!tab.enabled) {
+              return
             }
 
             this.props.goToPage(page);
@@ -255,47 +258,57 @@ export default class BottomTabBar extends Component {
                 break;
             }
           }}
-        >
-          <Animated.View
-            style={[styles.tab, {
-              paddingBottom: tab.animationValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [this.props.tabs.length <= 3 ? 7 : 15, 6],
-              }),
-            }]}
-            pointerEvents="none"
           >
+          <Animated.View
+            style={[
+              styles.tab,
+              this.props.tabStyle,
+              {
+                paddingBottom: tab.animationValue.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: hideLabels ? [0, 1] : [showAllLabels ? 7 : 15, 7 - ((this.props.activeFontSize - this.props.inactiveFontSize) / 2)],
+                }),
+              }
+            ]}
+            pointerEvents="none"
+            >
             <Image
               style={[iconStyle, {tintColor: isTabActive ? (tab.activeColor || activeColor) : inactiveColor}]}
               source={tab.icon}
               resizeMode="contain"
               pointerEvents="none"
             />
-            <Animated.Text
-              style={[
-                {
-                  alignSelf: 'center',
-                  marginTop: 1.5,
-                  backgroundColor: 'rgba(0, 0, 0, 0)',
-                },
-                this.props.labelStyle,
-                {
-                  fontSize: tab.animationValue.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [this.props.tabs.length <= 3 ? this.props.inactiveFontSize : 0.25, this.props.activeFontSize],
-                  }),
-                  opacity: (this.props.tabs.length <= 3) ? 1 : tab.animationValue.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.5, 1],
-                  }),
-                  color: isTabActive ? (tab.activeColor || activeColor) : inactiveColor,
-                },
-              ]}
-              numberOfLines={1}
-              pointerEvents="none"
-            >
-              {tab.name}
-            </Animated.Text>
+
+            {
+              hideLabels ?
+                null
+                :
+                <Animated.Text
+                  style={[
+                    {
+                      alignSelf: 'center',
+                      marginTop: 1.5,
+                      backgroundColor: 'rgba(0, 0, 0, 0)',
+                    },
+                    this.props.labelStyle,
+                    {
+                      fontSize: tab.animationValue.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [showAllLabels ? this.props.inactiveFontSize : 0.25, this.props.activeFontSize],
+                      }),
+                      opacity: showAllLabels ? 1 : tab.animationValue.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0.5, 1],
+                      }),
+                      color: isTabActive ? (tab.activeColor || activeColor) : inactiveColor,
+                    },
+                  ]}
+                  numberOfLines={1}
+                  pointerEvents="none"
+                  >
+                  {tab.name}
+                </Animated.Text>
+            }
           </Animated.View>
         </Button>
       </Animated.View>
@@ -314,7 +327,7 @@ export default class BottomTabBar extends Component {
             backgroundColor: this.state.backgroundColor
           }
         ]}
-      >
+        >
         <View
           style={[
             styles.tabs,
@@ -322,7 +335,7 @@ export default class BottomTabBar extends Component {
               justifyContent: this.state.justifyTabs,
             },
           ]}
-        >
+          >
           <Animated.View
             style={{
               position: 'absolute',

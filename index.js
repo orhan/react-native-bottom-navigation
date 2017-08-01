@@ -2,6 +2,7 @@
 * React Native Bottom Navigation.
 * A top-level component following the 'Bottom navigation' Material Design spec.
 */
+
 'use strict';
 
 /* --- Imports --- */
@@ -20,6 +21,7 @@ import {
 
 import PropTypes from 'prop-types';
 import BottomTabBar from './BottomTabBar';
+import DisplayLabels from './DisplayLabels';
 
 
 /* --- Member variables --- */
@@ -56,6 +58,8 @@ export default class BottomNavigation extends Component {
     onScroll: () => {},
     contentProps: {},
   };
+
+  static DisplayLabels = DisplayLabels;
 
 
   /* --- Lifecycle methods --- */
@@ -122,6 +126,7 @@ export default class BottomNavigation extends Component {
       goToPage: this.goToPage.bind(this),
       tabs: this._children().map((child) => {
         return {
+          enabled: child.props.enabled !== undefined ? child.props.enabled : true,
           icon: child.props.tabIcon,
           name: child.props.tabLabel,
           maskColor: child.props.tabMaskColor,
@@ -135,6 +140,8 @@ export default class BottomNavigation extends Component {
       backgroundColor: this.props.tabBarColor,
       borderWidth: this.props.tabBarBorderWidth,
       borderColor: this.props.tabBarBorderColor,
+      displayLabels: this.props.displayLabels || DisplayLabels.DEFAULT,
+      tabStyle: this.props.tabStyle,
       labelStyle: this.props.labelStyle,
       activeColor: this.props.activeColor,
       inactiveColor: this.props.inactiveColor,
