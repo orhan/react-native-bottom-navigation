@@ -322,7 +322,7 @@ export default class BottomTabBar extends Component {
           styles.container,
           {
             width: this.state.screenWidth,
-            borderTopWidth: this.props.borderWidth || 0.5,
+            borderTopWidth: this.props.borderWidth || StyleSheet.hairlineWidth,
             borderTopColor: this.props.borderColor || '#E5E5E5',
             backgroundColor: this.state.backgroundColor
           }
