@@ -17,6 +17,7 @@ import {
   Platform,
   StyleSheet,
   ViewPagerAndroid,
+  ViewPropTypes,
 } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -44,7 +45,7 @@ export default class BottomNavigation extends Component {
     onChangeTab: PropTypes.func,
     onScroll: PropTypes.func,
     renderTabBar: PropTypes.any,
-    style: View.propTypes.style,
+    style: (ViewPropTypes || View.propTypes).style,
     contentProps: PropTypes.object,
   };
 
