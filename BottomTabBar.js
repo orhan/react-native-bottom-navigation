@@ -150,6 +150,9 @@ export default class BottomTabBar extends Component {
     const isTabActive = this.props.activeTab === page;
     const activeColor = this.props.activeColor || 'black';
     const inactiveColor = this.props.inactiveColor || 'grey';
+    const updateIndicatorContainerStyle = {flex: 1, alignItems: 'center', justifyContent: 'center', position: 'absolute',
+                                            left: 0, right: 0, top: 0, bottom: 0, paddingLeft: 16, paddingBottom: 18};
+    const updateIndicatorStyle = {height: 14, width: 14, padding: 2.5, borderRadius: 7, backgroundColor: this.props.backgroundColor};
     const iconStyle = {alignSelf: 'center', height: 24};
 
     tab.animationValue.setValue(this.state.lastTab === page ? 1 : 0);
@@ -159,8 +162,8 @@ export default class BottomTabBar extends Component {
       duration: 150,
     }).start();
 
-    let hideLabels = this.props.displayLabels === DisplayLabels.NEVER;
-    let showAllLabels = (this.props.tabs.length <= 3 && this.props.displayLabels !== DisplayLabels.ACTIVE_TAB_ONLY) || this.props.displayLabels === DisplayLabels.ALWAYS;
+    const hideLabels = this.props.displayLabels === DisplayLabels.NEVER;
+    const showAllLabels = (this.props.tabs.length <= 3 && this.props.displayLabels !== DisplayLabels.ACTIVE_TAB_ONLY) || this.props.displayLabels === DisplayLabels.ALWAYS;
 
     return (
       <Animated.View
@@ -264,9 +267,12 @@ export default class BottomTabBar extends Component {
               styles.tab,
               this.props.tabStyle,
               {
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
                 paddingBottom: tab.animationValue.interpolate({
                   inputRange: [0, 1],
-                  outputRange: hideLabels ? [0, 1] : [showAllLabels ? 7 : 15, 7 - ((this.props.activeFontSize - this.props.inactiveFontSize) / 2)],
+                  outputRange: hideLabels ? [0, 1] : [showAllLabels ? 0 : 2, - ((this.props.activeFontSize - this.props.inactiveFontSize) / 2)],
                 }),
               }
             ]}
@@ -278,6 +284,22 @@ export default class BottomTabBar extends Component {
               resizeMode="contain"
               pointerEvents="none"
             />
+
+            {
+              tab.showUpdateIndicator ?
+                <View style={updateIndicatorContainerStyle}>
+                  {
+                    tab.renderUpdateIndicator ?
+                      tab.renderUpdateIndicator()
+                      :
+                      <View style={[updateIndicatorStyle]}>
+                        <View style={[{flex: 1, borderRadius: 8, backgroundColor: tab.activeColor}, tab.updateIndicatorStyle]} />
+                      </View>
+                  }
+                </View>
+                :
+                null
+            }
 
             {
               hideLabels ?

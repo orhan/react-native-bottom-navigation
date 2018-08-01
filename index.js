@@ -135,6 +135,9 @@ export default class BottomNavigation extends Component {
           activeColor: child.props.tabActiveColor,
           backgroundColor: child.props.tabBackgroundColor,
           animationValue: new Animated.Value(0),
+          showUpdateIndicator: child.props.showUpdateIndicator,
+          updateIndicatorStyle: child.props.updateIndicatorStyle,
+          renderUpdateIndicator: child.props.renderUpdateIndicator,
         }
       }),
       activeTab: this.state.currentPage,
