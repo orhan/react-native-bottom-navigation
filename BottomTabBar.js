@@ -150,9 +150,9 @@ export default class BottomTabBar extends Component {
     const isTabActive = this.props.activeTab === page;
     const activeColor = this.props.activeColor || 'black';
     const inactiveColor = this.props.inactiveColor || 'grey';
-    const updateIndicatorContainerStyle = {flex: 1, alignItems: 'center', justifyContent: 'center', position: 'absolute',
+    const badgeContainerStyle = {flex: 1, alignItems: 'center', justifyContent: 'center', position: 'absolute',
                                             left: 0, right: 0, top: 0, bottom: 0, paddingLeft: 16, paddingBottom: 18};
-    const updateIndicatorStyle = {height: 14, width: 14, padding: 2.5, borderRadius: 7, backgroundColor: this.props.backgroundColor};
+    const badgeStyle = {height: 14, padding: 2.5, borderRadius: 7, backgroundColor: this.props.backgroundColor};
     const iconStyle = {alignSelf: 'center', height: 24};
 
     tab.animationValue.setValue(this.state.lastTab === page ? 1 : 0);
@@ -286,14 +286,21 @@ export default class BottomTabBar extends Component {
             />
 
             {
-              tab.showUpdateIndicator ?
-                <View style={updateIndicatorContainerStyle}>
+              tab.badgeValue ?
+                <View style={badgeContainerStyle}>
                   {
-                    tab.renderUpdateIndicator ?
-                      tab.renderUpdateIndicator()
+                    tab.renderBadge ?
+                      tab.renderBadge()
                       :
-                      <View style={[updateIndicatorStyle]}>
-                        <View style={[{flex: 1, borderRadius: 8, backgroundColor: tab.activeColor}, tab.updateIndicatorStyle]} />
+                      <View style={[badgeStyle, typeof tab.badgeValue !== Number ? {width: 14} : null]}>
+                        {
+                          typeof tab.badgeValue !== Number ?
+                            <View style={[{flex: 1, borderRadius: 8, backgroundColor: tab.activeColor}, tab.badgeStyle]} />
+                            :
+                            <Text style={[{flex: 1, borderRadius: 8, backgroundColor: tab.activeColor}, tab.badgeStyle]}>
+                              {tab.badgeValue}
+                            </Text>
+                        }
                       </View>
                   }
                 </View>
