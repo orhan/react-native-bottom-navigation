@@ -45,6 +45,7 @@ export default class BottomNavigation extends Component {
     onChangeTab: PropTypes.func,
     onScroll: PropTypes.func,
     renderTabBar: PropTypes.any,
+    renderTabBarBackground: PropTypes.any,
     style: (ViewPropTypes || View.propTypes).style,
     contentProps: PropTypes.object,
   };
@@ -141,6 +142,7 @@ export default class BottomNavigation extends Component {
         }
       }),
       activeTab: this.state.currentPage,
+      renderBackground: this.props.renderTabBarBackground,
       backgroundColor: this.props.tabBarColor,
       borderWidth: this.props.tabBarBorderWidth,
       borderColor: this.props.tabBarBorderColor,

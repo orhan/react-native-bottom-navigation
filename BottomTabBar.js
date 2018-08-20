@@ -346,17 +346,38 @@ export default class BottomTabBar extends Component {
 
   render() {
     return (
-      <View
-        style={[
-          styles.container,
-          {
-            width: this.state.screenWidth,
-            borderTopWidth: this.props.borderWidth || StyleSheet.hairlineWidth,
-            borderTopColor: this.props.borderColor || '#E5E5E5',
-            backgroundColor: this.state.backgroundColor
-          }
-        ]}
-        >
+      <View style={[styles.container]}>
+        {
+          this.props.renderBackground ?
+            <View
+              style={{position: 'absolute',
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: this.state.screenWidth,
+                height: 56
+              }}
+              >
+              {this.props.renderBackground()}
+            </View>
+            :
+            <View
+              style={{
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: this.state.screenWidth,
+                height: 56,
+                borderTopWidth: this.props.borderWidth || StyleSheet.hairlineWidth,
+                borderTopColor: this.props.borderColor || '#E5E5E5',
+                backgroundColor: this.state.backgroundColor
+              }}
+              />
+        }
+
         <View
           style={[
             styles.tabs,
