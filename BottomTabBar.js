@@ -57,7 +57,7 @@ export default class BottomTabBar extends Component {
     super(props);
 
     let tabWidths = this.setTabWidth(this.props.tabs.length);
-    let nextBackgroundColor = this.props.backgroundColor || '#FFFFFF';
+    let nextBackgroundColor = this.props.backgroundColor || 'rgba(0, 0, 0, 0)';
     let activeTab = this.props.activeTab || 0;
     let animationValue = 0;
 
@@ -371,17 +371,27 @@ export default class BottomTabBar extends Component {
                 bottom: 0,
                 width: this.state.screenWidth,
                 height: 56,
-                borderTopWidth: this.props.borderWidth || StyleSheet.hairlineWidth,
-                borderTopColor: this.props.borderColor || '#E5E5E5',
-                backgroundColor: this.state.backgroundColor
+                backgroundColor: this.props.borderColor || '#E5E5E5'
               }}
+              >
+              <View
+                style={{
+                  width: this.state.screenWidth,
+                  height: 56 - (this.props.borderWidth || StyleSheet.hairlineWidth),
+                  top: this.props.borderWidth || StyleSheet.hairlineWidth,
+                  backgroundColor: this.state.backgroundColor
+                }}
               />
+            </View>
         }
 
         <View
           style={[
             styles.tabs,
             {
+              width: this.state.screenWidth,
+              height: 56 - (this.props.renderBackground ? 0 : (this.props.borderWidth || StyleSheet.hairlineWidth)),
+              top: this.props.renderBackground ? 0 : (this.props.borderWidth || StyleSheet.hairlineWidth),
               justifyContent: this.state.justifyTabs,
             },
           ]}
