@@ -195,9 +195,9 @@ export default class BottomTabBar extends Component {
           }}
           pointerEvents='box-only'
           enabled={true}
-          maskColor={this.props.tabs.length <= 3 ? (tab.maskColor || this.props.maskColor) : 'rgba(255, 255, 255, 0.055)'}
+          maskColor={this.props.tabs.length <= 3 ? (tab.maskColor || this.props.maskColor) : (tab.maskColor || 'rgba(255, 255, 255, 0.055)')}
           rippleBorderRadiusPercent={this.props.tabs.length <= 3 ? (Platform.OS === 'ios' ? 25 : 100) : 50}
-          rippleColor={this.props.tabs.length <= 3 ? (tab.rippleColor || this.props.rippleColor) : 'rgba(255, 255, 255, 0.055)'}
+          rippleColor={this.props.tabs.length <= 3 ? (tab.rippleColor || this.props.rippleColor) : (tab.rippleColor || 'rgba(255, 255, 255, 0.055)')}
           rippleDuration={this.props.tabs.length <= 3 ? 100 : 50}
           rippleLocation="center"
           onPress={() => {
