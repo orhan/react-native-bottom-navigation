@@ -99,6 +99,8 @@ export default class BottomTabBar extends Component {
       lastTab: this.props.activeTab,
       inactiveTabWidth: tabWidths.inactiveTabWidth,
       activeTabWidth: tabWidths.activeTabWidth,
+      backgroundColor: nextProps.backgroundColor || '#FFFFFF',
+      nextBackgroundColor: nextProps.tabs[nextProps.activeTab || 0].backgroundColor,
       maxTabWidth,
       justifyTabs
     });
