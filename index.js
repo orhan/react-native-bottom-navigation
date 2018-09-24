@@ -55,6 +55,7 @@ export default class BottomNavigation extends Component {
     page: -1,
     locked: true,
     animated: false,
+    animatedTabSwitch: true,
     onChangeTab: () => {},
     onScroll: () => {},
     contentProps: {},
@@ -207,10 +208,10 @@ export default class BottomNavigation extends Component {
           style={{
             flex: 1,
             alignSelf: 'stretch',
-            opacity: this.state.animationValue.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0, 1],
-            }),
+            opacity: this.props.animatedTabSwitch ? this.state.animationValue.interpolate({
+              inputRange: [0, 1, ],
+              outputRange: [0, 1, ],
+            }) : 1,
           }}
         >
           {
