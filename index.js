@@ -246,6 +246,7 @@ export default class BottomNavigation extends Component {
           directionalLockEnabled
           alwaysBounceVertical={false}
           keyboardDismissMode="on-drag"
+          keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps}
           onScroll={(e) => {
             const offsetX = e.nativeEvent.contentOffset.x;
             this._updateScrollValue(offsetX / this.state.containerWidth);
