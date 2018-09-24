@@ -3,11 +3,10 @@
 * A top-level component following the 'Bottom navigation' Material Design spec.
 */
 
-'use strict';
 
 /* --- Imports --- */
 
-import React, {Component} from 'react';
+import React, {Component, } from 'react';
 import {
   Dimensions,
   View,
@@ -97,25 +96,16 @@ export default class BottomNavigation extends Component {
       this.props.onChangeTab({ i: pageNumber, ref: this._children()[pageNumber], });
     }
 
-    if (Platform.OS === 'ios') {
-      const offset = pageNumber * this.state.containerWidth;
-      this.scrollView.scrollTo({x: offset, y: 0, animated: this.props.animated});
-    } else {
-      if (this.props.animated) {
-        this.scrollView.setPage(pageNumber);
-      } else {
-        this.scrollView.setPageWithoutAnimation(pageNumber);
-      }
-    }
+    const offset = pageNumber * this.state.containerWidth;
 
     this.state.animationValue.setValue(0);
-    Animated.timing(this.state.animationValue, {
-      fromValue: 0,
-      toValue: 1,
-      duration: 200,
-    }).start();
-
-    this.setState({currentPage: pageNumber});
+    this.setState({currentPage: pageNumber, }, () => {
+      Animated.timing(this.state.animationValue, {
+        fromValue: 0,
+        toValue: 1,
+        duration: 200,
+      }).start();
+    });
   }
 
 
@@ -139,7 +129,7 @@ export default class BottomNavigation extends Component {
           badgeValue: child.props.badgeValue,
           badgeStyle: child.props.badgeStyle,
           renderBadge: child.props.renderBadge,
-        }
+        };
       }),
       activeTab: this.state.currentPage,
       renderBackground: this.props.renderTabBarBackground,
@@ -167,34 +157,6 @@ export default class BottomNavigation extends Component {
         [this.props.tabBarPosition === 'overlayTop' ? 'top' : 'bottom']: 0,
       };
     }
-  }
-
-  _updateSelectedPage(currentPage) {
-    if (!this || !this.state) {
-      return;
-    }
-    
-    let localCurrentPage = currentPage;
-    if (typeof localCurrentPage === 'object') {
-      localCurrentPage = currentPage.nativeEvent.position;
-    }
-
-    this.state.animationValue.setValue(0);
-    Animated.timing(this.state.animationValue, {
-      fromValue: 0,
-      toValue: 1,
-      easing: Easing.ease,
-      duration: 150,
-    }).start();
-
-    this.setState({currentPage: localCurrentPage, }, () => {
-      this.props.onChangeTab({ i: localCurrentPage, ref: this._children()[localCurrentPage], });
-    });
-  }
-
-  _updateScrollValue(value) {
-    this.state.scrollValue.setValue(value);
-    this.props.onScroll(value);
   }
 
   _handleLayout(e) {
@@ -230,96 +192,6 @@ export default class BottomNavigation extends Component {
   }
 
   /**
-  * Renders a horizontal ScrollView on iOS and a native ViewPager on Android.
-  */
-  renderScrollableContent() {
-    if (Platform.OS === 'ios') {
-      return (
-        <ScrollView
-          ref={(scrollView) => { this.scrollView = scrollView; }}
-          style={styles.scrollableContentIOS}
-          contentContainerStyle={styles.scrollableContentContainerIOS}
-          contentOffset={{ x: this.props.initialPage * this.state.containerWidth, }}
-          horizontal
-          pagingEnabled
-          scrollEnabled={!this.props.locked}
-          automaticallyAdjustContentInsets={false}
-          scrollEventThrottle={16}
-          scrollsToTop={false}
-          showsHorizontalScrollIndicator={false}
-          directionalLockEnabled
-          alwaysBounceVertical={false}
-          keyboardDismissMode="on-drag"
-          keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps}
-          onScroll={(e) => {
-            const offsetX = e.nativeEvent.contentOffset.x;
-            this._updateScrollValue(offsetX / this.state.containerWidth);
-          }}
-          onMomentumScrollBegin={(e) => {
-            const offsetX = e.nativeEvent.contentOffset.x;
-            const page = Math.round(offsetX / this.state.containerWidth);
-            if (this.state.currentPage !== page) {
-              this._updateSelectedPage(page);
-            }
-          }}
-          onMomentumScrollEnd={(e) => {
-            const offsetX = e.nativeEvent.contentOffset.x;
-            const page = Math.round(offsetX / this.state.containerWidth);
-            if (this.state.currentPage !== page) {
-              this._updateSelectedPage(page);
-            }
-          }}
-          {...this.props.contentProps}
-          >
-          {
-            this._children().map((child, idx) => {
-              return (
-                <View
-                  key={child.props.tabLabel + '_' + idx}
-                  style={{width: this.state.containerWidth, }}
-                  >
-                  {child}
-                </View>
-              );
-            })
-          }
-        </ScrollView>
-      );
-    }
-
-    else {
-      return (
-        <ViewPagerAndroid
-          ref={(scrollView) => { this.scrollView = scrollView; }}
-          style={styles.scrollableContentAndroid}
-          scrollEnabled={!this.props.locked}
-          initialPage={this.props.initialPage}
-          onPageSelected={this._updateSelectedPage}
-          keyboardDismissMode="on-drag"
-          onPageScroll={(e) => {
-            const { offset, position, } = e.nativeEvent;
-            this._updateScrollValue(position + offset);
-          }}
-          {...this.props.contentProps}
-          >
-          {
-            this._children().map((child, idx) => {
-              return (
-                <View
-                  key={child.props.tabLabel + '_' + idx}
-                  style={{width: this.state.containerWidth, }}
-                  >
-                  {child}
-                </View>
-              );
-            })
-          }
-        </ViewPagerAndroid>
-      );
-    }
-  }
-
-  /**
   * Renders the component itself.
   */
   render() {
@@ -327,9 +199,9 @@ export default class BottomNavigation extends Component {
 
     return (
       <View
-        style={[styles.container, this.props.style]}
+        style={[styles.container, this.props.style, ]}
         onLayout={this._handleLayout.bind(this)}
-        >
+      >
         {tabBarProps && this.props.tabBarPosition === 'top' && this.renderTabBar(tabBarProps)}
         <Animated.View
           style={{
@@ -340,8 +212,20 @@ export default class BottomNavigation extends Component {
               outputRange: [0, 1],
             }),
           }}
-          >
-        {this.renderScrollableContent()}
+        >
+          {
+            this._children().map((child, idx) => {
+              if (this.state.currentPage === idx) {
+                return (
+                  <View style={[StyleSheet.absoluteFill, ]}>
+                    {child}
+                  </View>
+                );
+              } else {
+                return null;
+              }
+            })
+          }
         </Animated.View>
         {tabBarProps && (this.props.tabBarPosition === 'bottom' || this.state.overlayTabs) && this.renderTabBar(tabBarProps)}
       </View>
