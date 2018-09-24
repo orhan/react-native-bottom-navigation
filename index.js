@@ -170,6 +170,10 @@ export default class BottomNavigation extends Component {
   }
 
   _updateSelectedPage(currentPage) {
+    if (!this || !this.state) {
+      return;
+    }
+    
     let localCurrentPage = currentPage;
     if (typeof localCurrentPage === 'object') {
       localCurrentPage = currentPage.nativeEvent.position;
