@@ -214,19 +214,7 @@ export default class BottomNavigation extends Component {
             }) : 1,
           }}
         >
-          {
-            this._children().map((child, idx) => {
-              if (this.state.currentPage === idx) {
-                return (
-                  <View style={[StyleSheet.absoluteFill, ]}>
-                    {child}
-                  </View>
-                );
-              } else {
-                return null;
-              }
-            })
-          }
+          { this._children()[this.state.currentPage] }
         </Animated.View>
         {tabBarProps && (this.props.tabBarPosition === 'bottom' || this.state.overlayTabs) && this.renderTabBar(tabBarProps)}
       </View>
