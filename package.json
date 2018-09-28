@@ -1,6 +1,6 @@
 {
   "name": "react-native-bottom-navigation",
-  "version": "0.5.1",
+  "version": "0.5.8",
   "description": "A top-level component following the 'Bottom navigation' Material Design spec.",
   "main": "index.js",
   "scripts": {
