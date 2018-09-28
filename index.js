@@ -12,10 +12,7 @@ import {
   View,
   Animated,
   Easing,
-  ScrollView,
-  Platform,
   StyleSheet,
-  ViewPagerAndroid,
   ViewPropTypes,
 } from 'react-native';
 
@@ -54,8 +51,10 @@ export default class BottomNavigation extends Component {
     initialPage: 0,
     page: -1,
     locked: true,
+    enableScaleAnimation: true,
     animated: false,
     animatedTabSwitch: true,
+    animatedTabSwitchDuration: 100,
     onChangeTab: () => {},
     onScroll: () => {},
     contentProps: {},
@@ -97,14 +96,13 @@ export default class BottomNavigation extends Component {
       this.props.onChangeTab({ i: pageNumber, ref: this._children()[pageNumber], });
     }
 
-    const offset = pageNumber * this.state.containerWidth;
-
     this.state.animationValue.setValue(0);
-    this.setState({currentPage: pageNumber, }, () => {
+    this.setState({currentPage: pageNumber}, () => {
       Animated.timing(this.state.animationValue, {
         fromValue: 0,
         toValue: 1,
-        duration: 200,
+        duration: this.props.animatedTabSwitchDuration,
+        easing: Easing.ease,
       }).start();
     });
   }
@@ -209,12 +207,33 @@ export default class BottomNavigation extends Component {
             flex: 1,
             alignSelf: 'stretch',
             opacity: this.props.animatedTabSwitch ? this.state.animationValue.interpolate({
-              inputRange: [0, 1, ],
-              outputRange: [0, 1, ],
+              inputRange: [0, 1],
+              outputRange: [0, 1],
             }) : 1,
+            transform: [{
+              scale: this.props.animatedTabSwitch && this.props.enableScaleAnimation
+                ? this.state.animationValue.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0.975, 1],
+                  }) 
+                : 1
+            }]
           }}
         >
-          { this._children()[this.state.currentPage] }
+          { 
+            this._children().map((child, index) => {
+              const currentPage = (index === this.state.currentPage);
+              
+              return (
+                <View 
+                  style={[StyleSheet.absoluteFill, currentPage ? null : { opacity: 0 }]}
+                  pointerEvents={currentPage ? 'auto' : 'none'}
+                  >
+                  {child}
+                </View>
+              )
+            }) 
+          }
         </Animated.View>
         {tabBarProps && (this.props.tabBarPosition === 'bottom' || this.state.overlayTabs) && this.renderTabBar(tabBarProps)}
       </View>
