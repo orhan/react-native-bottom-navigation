@@ -34,30 +34,25 @@ export default class BottomNavigation extends Component {
   /* --- Component setup -- */
 
   static propTypes = {
-    tabBarPosition: PropTypes.oneOf(['top', 'bottom', 'overlayTop', 'overlayBottom', ]),
+    style: (ViewPropTypes || View.propTypes).style,
     initialPage: PropTypes.number,
     page: PropTypes.number,
-    locked: PropTypes.bool,
+    animated: PropTypes.bool,
+    animatedTabSwitch: PropTypes.bool,
+    animatedTabSwitchDuration: PropTypes.number,
     onChangeTab: PropTypes.func,
     onScroll: PropTypes.func,
-    renderTabBar: PropTypes.any,
     renderTabBarBackground: PropTypes.any,
-    style: (ViewPropTypes || View.propTypes).style,
-    contentProps: PropTypes.object,
   };
 
   static defaultProps = {
-    tabBarPosition: 'bottom',
     initialPage: 0,
     page: -1,
-    locked: true,
-    enableScaleAnimation: true,
     animated: false,
     animatedTabSwitch: true,
     animatedTabSwitchDuration: 100,
     onChangeTab: () => {},
     onScroll: () => {},
-    contentProps: {},
   };
 
   static DisplayLabels = DisplayLabels;
@@ -111,7 +106,6 @@ export default class BottomNavigation extends Component {
   /* --- Private methods --- */
 
   _updateTabBarProps() {
-    overlayTabs = (this.props.tabBarPosition === 'overlayTop' || this.props.tabBarPosition === 'overlayBottom');
     tabBarProps = {
       scrollToTop: this.scrollToTop.bind(this),
       goToPage: this.goToPage.bind(this),
@@ -147,15 +141,6 @@ export default class BottomNavigation extends Component {
       rippleColor: this.props.rippleColor || this.props.maskColor,
       maskColor: this.props.maskColor || this.props.rippleColor,
     };
-
-    if (overlayTabs) {
-      tabBarProps.style = {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        [this.props.tabBarPosition === 'overlayTop' ? 'top' : 'bottom']: 0,
-      };
-    }
   }
 
   _handleLayout(e) {
@@ -178,19 +163,6 @@ export default class BottomNavigation extends Component {
   /* --- Rendering methods --- */
 
   /**
-  * Renders the tab bar.
-  */
-  renderTabBar(props) {
-    if (this.props.renderTabBar === false) {
-      return null;
-    } else if (this.props.renderTabBar) {
-      return React.cloneElement(this.props.renderTabBar(), props);
-    } else {
-      return <BottomTabBar {...props} />;
-    }
-  }
-
-  /**
   * Renders the component itself.
   */
   render() {
@@ -199,9 +171,7 @@ export default class BottomNavigation extends Component {
     return (
       <View
         style={[styles.container, this.props.style, ]}
-        onLayout={this._handleLayout.bind(this)}
-      >
-        {tabBarProps && this.props.tabBarPosition === 'top' && this.renderTabBar(tabBarProps)}
+        onLayout={this._handleLayout.bind(this)}>
         <Animated.View
           style={{
             flex: 1,
@@ -210,32 +180,27 @@ export default class BottomNavigation extends Component {
               inputRange: [0, 1],
               outputRange: [0, 1],
             }) : 1,
-            transform: [{
-              scale: this.props.animatedTabSwitch && this.props.enableScaleAnimation
-                ? this.state.animationValue.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.975, 1],
-                  }) 
-                : 1
-            }]
-          }}
-        >
+          }}>
           { 
             this._children().map((child, index) => {
               const currentPage = (index === this.state.currentPage);
-              
+            
               return (
                 <View 
-                  style={[StyleSheet.absoluteFill, currentPage ? null : { opacity: 0 }]}
-                  pointerEvents={currentPage ? 'auto' : 'none'}
-                  >
+                  key={child.props.tabId + "-" + child.props.tabLabel}
+                  style={[
+                    StyleSheet.absoluteFill, 
+                    currentPage ? null : { opacity: 0 }
+                  ]}
+                  pointerEvents={currentPage ? 'auto' : 'none'}>
                   {child}
                 </View>
               )
             }) 
           }
         </Animated.View>
-        {tabBarProps && (this.props.tabBarPosition === 'bottom' || this.state.overlayTabs) && this.renderTabBar(tabBarProps)}
+        
+        <BottomTabBar {...tabBarProps} />
       </View>
     );
   }
