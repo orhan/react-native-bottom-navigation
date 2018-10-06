@@ -245,6 +245,10 @@ export default class BottomTabBar extends Component {
 
                   let tabPosition = tabPositions[tab.name];
                   let backgroundColor = tab.backgroundColor || this.props.backgroundColor;
+                  
+                  if (!tabPosition) {
+                    tabPosition = {x: 0, y: 0};
+                  }
 
                   if (this.props.tabs.length > 3 || backgroundColor !== this.state.nextBackgroundColor) {
                     this.refs.mainRipple.setColors(maskColor, rippleColor);
