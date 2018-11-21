@@ -43,6 +43,7 @@ export default class BottomNavigation extends Component {
     onChangeTab: PropTypes.func,
     onScroll: PropTypes.func,
     renderTabBarBackground: PropTypes.any,
+    translucent: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -51,6 +52,7 @@ export default class BottomNavigation extends Component {
     animated: false,
     animatedTabSwitch: true,
     animatedTabSwitchDuration: 100,
+    translucent: false,
     onChangeTab: () => {},
     onScroll: () => {},
   };
@@ -67,7 +69,10 @@ export default class BottomNavigation extends Component {
       currentPage: this.props.initialPage || 0,
       scrollValue: new Animated.Value(this.props.initialPage),
       containerWidth: Dimensions.get('window').width,
+      
       animationValue: new Animated.Value(1),
+      bottomBarAnimation: new Animated.Value(0),
+      bottomBarHidden: false,
     };
   }
 
@@ -80,6 +85,40 @@ export default class BottomNavigation extends Component {
 
   /* --- Public methods --- */
 
+  toggleBottomBar() {
+    const { bottomBarHidden } = this.state;
+    
+    if (bottomBarHidden) {
+      this.showBottomBar();
+    } else {
+      this.hideBottomBar();
+    }
+  }
+  
+  hideBottomBar() {
+    const { bottomBarAnimation } = this.state;
+    
+    Animated.timing(bottomBarAnimation, {
+      toValue: 1,
+      duration: 200,
+      easing: Easing.ease,
+    }).start(() => {
+      this.setState({ bottomBarHidden: true });
+    })
+  }
+  
+  showBottomBar() {
+    const { bottomBarAnimation } = this.state;
+    
+    Animated.timing(bottomBarAnimation, {
+      toValue: 0,
+      duration: 100,
+      easing: Easing.ease,
+    }).start(() => {
+      this.setState({ bottomBarHidden: false });
+    })
+  }
+  
   scrollToTop(pageNumber) {
     if (this.props.onScrollToTop) {
       this.props.onScrollToTop({ i: pageNumber, ref: this._children()[pageNumber], });
@@ -106,6 +145,24 @@ export default class BottomNavigation extends Component {
   /* --- Private methods --- */
 
   _updateTabBarProps() {
+    const { 
+      renderTabBarBackground, 
+      tabBarColor, 
+      tabBarBorderWidth,
+      tabBarBorderColor,
+      displayLabels,
+      tabStyle,
+      labelStyle,
+      activeColor,
+      inactiveColor,
+      inactiveFontSize,
+      activeFontSize,
+      rippleColor,
+      maskColor
+    } = this.props;
+    
+    const { currentPage, scrollValue, containerWidth } = this.state;
+    
     tabBarProps = {
       scrollToTop: this.scrollToTop.bind(this),
       goToPage: this.goToPage.bind(this),
@@ -124,22 +181,22 @@ export default class BottomNavigation extends Component {
           renderBadge: child.props.renderBadge,
         };
       }),
-      activeTab: this.state.currentPage,
-      renderBackground: this.props.renderTabBarBackground,
-      backgroundColor: this.props.tabBarColor,
-      borderWidth: this.props.tabBarBorderWidth,
-      borderColor: this.props.tabBarBorderColor,
-      displayLabels: this.props.displayLabels || DisplayLabels.DEFAULT,
-      tabStyle: this.props.tabStyle,
-      labelStyle: this.props.labelStyle,
-      activeColor: this.props.activeColor,
-      inactiveColor: this.props.inactiveColor,
-      inactiveFontSize: this.props.inactiveFontSize || 12,
-      activeFontSize: this.props.activeFontSize || 14,
-      scrollValue: this.state.scrollValue,
-      containerWidth: this.state.containerWidth,
-      rippleColor: this.props.rippleColor || this.props.maskColor,
-      maskColor: this.props.maskColor || this.props.rippleColor,
+      activeTab: currentPage,
+      renderBackground: renderTabBarBackground,
+      backgroundColor: tabBarColor,
+      borderWidth: tabBarBorderWidth,
+      borderColor: tabBarBorderColor,
+      displayLabels: displayLabels || DisplayLabels.DEFAULT,
+      tabStyle: tabStyle,
+      labelStyle: labelStyle,
+      activeColor: activeColor,
+      inactiveColor: inactiveColor,
+      inactiveFontSize: inactiveFontSize || 12,
+      activeFontSize: activeFontSize || 14,
+      scrollValue: scrollValue,
+      containerWidth: containerWidth,
+      rippleColor: rippleColor || maskColor,
+      maskColor: maskColor || rippleColor,
     };
   }
 
@@ -166,33 +223,40 @@ export default class BottomNavigation extends Component {
   * Renders the component itself.
   */
   render() {
+    const { translucent, animatedTabSwitch } = this.props;
+    const { currentPage, animationValue, bottomBarAnimation } = this.state;
+    
     this._updateTabBarProps();
 
     return (
-      <View
-        style={[styles.container, this.props.style, ]}
+      <Animated.View
+        style={[styles.container, this.props.style]}
         onLayout={this._handleLayout.bind(this)}>
         <Animated.View
           style={{
             flex: 1,
             alignSelf: 'stretch',
-            opacity: this.props.animatedTabSwitch ? this.state.animationValue.interpolate({
+            marginBottom: translucent ? 0 : bottomBarAnimation.interpolate({
+              inputRange: [0, 1],
+              outputRange: [56, 0],
+            }),
+            opacity: animatedTabSwitch ? animationValue.interpolate({
               inputRange: [0, 1],
               outputRange: [0, 1],
             }) : 1,
           }}>
           { 
             this._children().map((child, index) => {
-              const currentPage = (index === this.state.currentPage);
+              const isCurrentPage = (index === currentPage);
             
               return (
                 <View 
                   key={child.props.tabId + "-" + child.props.tabLabel}
                   style={[
                     StyleSheet.absoluteFill, 
-                    currentPage ? null : { opacity: 0 }
+                    isCurrentPage ? null : { opacity: 0 }
                   ]}
-                  pointerEvents={currentPage ? 'auto' : 'none'}>
+                  pointerEvents={isCurrentPage ? 'auto' : 'none'}>
                   {child}
                 </View>
               )
@@ -200,8 +264,22 @@ export default class BottomNavigation extends Component {
           }
         </Animated.View>
         
-        <BottomTabBar {...tabBarProps} />
-      </View>
+        <Animated.View 
+          style={[
+            styles.bottomBar,
+            {
+              transform: [{
+                translateY: bottomBarAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, 56],
+                })
+              }]
+            }
+          ]}
+          >
+          <BottomTabBar {...tabBarProps} />
+        </Animated.View>
+      </Animated.View>
     );
   }
 }
@@ -212,6 +290,7 @@ export default class BottomNavigation extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    overflow: 'hidden',
   },
 
   scrollableContentContainerIOS: {
@@ -225,4 +304,12 @@ const styles = StyleSheet.create({
   scrollableContentAndroid: {
     flex: 1,
   },
+  
+  bottomBar: {
+    position: 'absolute',
+    height: 56,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  }
 });
